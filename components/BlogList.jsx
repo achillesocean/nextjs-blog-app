@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BlogItem from "./BlogItem";
-import { blog_data } from "@/assets/assets";
+import axios from "axios";
 
 const BlogList = () => {
   const [menu, setMenu] = useState("All"); // how's this working without being declared a client component?
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const response = await axios.get("/api/blog");
+      setBlogs(response.data.blogs);
+    };
+    fetchBlogs();
+  }, []);
 
   return (
     <div>
@@ -46,10 +55,10 @@ const BlogList = () => {
         </button>
       </div>
       <div className="flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-24">
-        {blog_data
+        {blogs
           .filter((blog) => (menu === "All" ? true : blog.category === menu))
           .map((blog) => (
-            <BlogItem key={blog.id} {...blog} />
+            <BlogItem key={blog._id} {...blog} />
           ))}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import axios from "axios";
 
 const Page = ({ params: { id } = { id: "1" } }) => {
   // safer
@@ -13,27 +14,9 @@ const Page = ({ params: { id } = { id: "1" } }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchBlogData = () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        if (!id) {
-          throw new Error("No id provided");
-        }
-
-        const foundData = blog_data.find((item) => item.id === Number(id));
-
-        if (!foundData) {
-          throw new Error(`No data found for id: ${id}`);
-        }
-
-        setData(foundData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const fetchBlogData = async () => {
+      const response = await axios.get("/api/blog?id=" + id);
+      setData(response.data);
     };
     fetchBlogData();
   }, [id]);
@@ -87,7 +70,7 @@ const Page = ({ params: { id } = { id: "1" } }) => {
             {data.title}
           </h1>
           <Image
-            src={data.author_img}
+            src={data.authorImg}
             alt="author"
             width={60}
             height={60}

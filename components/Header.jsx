@@ -1,8 +1,24 @@
 import { assets } from "@/assets/assets";
+import axios from "axios";
 import Image from "next/image";
 import React from "react";
 
 function Header() {
+  const [email, setEmail] = useState("");
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("email", email);
+    const response = await axios.post("/api/email", formData);
+    if (response.data.success) {
+      toast.success(response.data.msg);
+      setEmail("");
+    } else {
+      toast.error("Error subscribing");
+    }
+  };
+
   return (
     <div className="py-5 px-5 md:px-12 lg:px-28">
       <div className="flex justify-between items-center">
@@ -23,10 +39,13 @@ function Header() {
           perferendis!
         </p>
         <form
+          onSubmit={onSubmitHandler}
           className="flex justify-between max-w-[500px] scale-75 sm:scale-100 mx-auto mt-10 border border-black shadow-[-7px_7px_0px_#000000] "
           action=""
         >
           <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             type="email"
             placeholder="Enter your email"
             className="pl-4 outline-none"
